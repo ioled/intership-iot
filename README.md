@@ -1,40 +1,55 @@
 # Pasantia IoT iOLED
 
-Documentación para práctica en el desarrollo de plataforma IoT
+Documentación para práctica en el desarrollo de plataforma IoT. 
 
- 
-- MQTT
-
+# MQTT
 El protocolo MQTT se ha convertido en uno de los principales pilares del IoT por su sencillez y ligereza. MQTT son las siglas MQ Telemetry Transport. El funcionamiento del MQTT es un servicio de mensajería push con patrón publicador/suscriptor (pub-sub). Como vimos en la entrada anterior, en este tipo de infraestructuras los clientes se conectan con un servidor central denominado broker.
+
+![Pong](MQTT.png)
 
 Para filtrar los mensajes que son enviados a cada cliente los mensajes se disponen en topics organizados jerárquicamente. Un cliente puede publicar un mensaje en un determinado topic. Otros clientes pueden suscribirse a este topic, y el broker le hará llegar los mensajes suscritos. Los clientes inician una conexión TCP/IP con el broker, el cual mantiene un registro de los clientes conectados. Esta conexión se mantiene abierta hasta que el cliente la finaliza. Por defecto, MQTT emplea el puerto 1883 y el 8883 cuando funciona sobre TLS.
 
-  
-
 MQTT dispone de un mecanismo de calidad del servicio o QoS, entendido como la forma de gestionar la robustez del envío de mensajes al cliente ante fallos (por ejemplo, de conectividad).
-
-  
 
 MQTT tiene tres niveles QoS posibles.
 
-  
+* QoS 0 unacknowledged (at most one): El mensaje se envía una única vez. En caso de fallo por lo que puede que alguno no se entregue.
 
-- QoS 0 unacknowledged (at most one): El mensaje se envía una única vez. En caso de fallo por lo que puede que alguno no se entregue.
+* QoS 1 acknowledged (at least one): El mensaje se envía hasta que se garantiza la entrega. En caso de fallo, el suscriptor puede recibir algún mensaje duplicados.
 
-- QoS 1 acknowledged (at least one): El mensaje se envía hasta que se garantiza la entrega. En caso de fallo, el suscriptor puede recibir algún mensaje duplicados.
-
-- QoS 2 assured (exactly one). Se garantiza que cada mensaje se entrega al suscriptor, y únicamente una vez.
+* QoS 2 assured (exactly one). Se garantiza que cada mensaje se entrega al suscriptor, y únicamente una vez.
 
 ## Google cloud
 
-En Google cloud estos es la documentación necesaria para publicar por MQTT.
+Con Cloud IoT Core, puede controlar un dispositivo enviándole una configuración de dispositivo. La configuración de un dispositivo es un blob de datos arbitrario definido por el usuario enviado desde Cloud IoT Core a un dispositivo. Los datos pueden ser estructurados o no estructurados. 
 
-  
+La información del estado del dispositivo captura el estado actual del dispositivo, no el entorno. Los dispositivos pueden describir su estado con un conjunto arbitrario de datos definidos por el usuario enviados desde el dispositivo a la nube. Los datos pueden ser estructurados o no estructurados. 
 
-https://cloud.google.com/iot/docs/samples/mqtt-samples
+### Configuración del dispositivo
+```json
+"board": {
+	"led1": {
+		"duty":0.85,
+		"state":true
+	},
+	"led2": {
+		"duty":0.85,
+		"state":true
+	},
+	"timer": {
+		"timerOn":"22:00",
+		"timerOff":"10:00",
+		"timerState":false
+	}
+}
+```
 
-https://cloud.google.com/iot/docs/how-tos/mqtt-bridge#iot-core-mqtt-auth-run-nodejs
-
+### Estado del dispositivo
+```json
+{   "hum":30.548615,
+    "temp":34.038687
+}
+```
   
 ### Node.js
 ```javascript
@@ -93,8 +108,6 @@ exports.sendIotCoreDeviceConfig = async (client, deviceId, config) => {
     }
 };
 
-  
-
 /**
 * Get the state of a iot core device.
 * @param {Object} client The google cloud client.
@@ -147,6 +160,7 @@ let res = MQTT.pub(stateTopic, JSON.stringify({temp: temp, hum: hum}), 1);
 print('Published:', res ?  'yes'  :  'no');
 ```
 
+## Configuración del dispositivo
 ```json
 "board": {
 	"led1": {
@@ -163,5 +177,16 @@ print('Published:', res ?  'yes'  :  'no');
 		"timerState":false
 	}
 }
-
 ```
+
+## Documentación
+
+https://cloud.google.com/iot/docs/samples/mqtt-samples
+
+https://cloud.google.com/iot/docs/how-tos/mqtt-bridge#iot-core-mqtt-auth-run-nodejs
+
+https://cloud.google.com/iot/docs/concepts/devices
+
+- [iotcore/mqtt-samples](https://cloud.google.com/iot/docs/samples/mqtt-samples) - MQTT en IoT COre
+- [iotcore/nodejs](https://cloud.google.com/iot/docs/how-tos/mqtt-bridge#iot-core-mqtt-auth-run-nodejs) - Publicando mensajes MQTT con Iot Core en nodejs
+- [iotcorre/devices](https://cloud.google.com/iot/docs/concepts/devices) - Definiciones de config, state y commands
