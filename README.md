@@ -160,32 +160,7 @@ let res = MQTT.pub(stateTopic, JSON.stringify({temp: temp, hum: hum}), 1);
 print('Published:', res ?  'yes'  :  'no');
 ```
 
-## Configuración del dispositivo
-```json
-"board": {
-	"led1": {
-		"duty":0.85,
-		"state":true
-	},
-	"led2": {
-		"duty":0.85,
-		"state":true
-	},
-	"timer": {
-		"timerOn":"22:00",
-		"timerOff":"10:00",
-		"timerState":false
-	}
-}
-```
-
 ## Documentación
-
-https://cloud.google.com/iot/docs/samples/mqtt-samples
-
-https://cloud.google.com/iot/docs/how-tos/mqtt-bridge#iot-core-mqtt-auth-run-nodejs
-
-https://cloud.google.com/iot/docs/concepts/devices
 
 - [iotcore/mqtt-samples](https://cloud.google.com/iot/docs/samples/mqtt-samples) - MQTT en IoT COre
 - [iotcore/nodejs](https://cloud.google.com/iot/docs/how-tos/mqtt-bridge#iot-core-mqtt-auth-run-nodejs) - Publicando mensajes MQTT con Iot Core en nodejs
